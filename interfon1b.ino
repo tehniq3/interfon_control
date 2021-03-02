@@ -8,7 +8,13 @@
 #define raspuns 3
 #define yala 4
 
-byte suna = 1;  
+byte starebuton;             // the current reading from the input pin
+byte citirestarebuton;   // 
+byte ultimastarebuton = HIGH;   // the previous reading from the input pin
+
+unsigned long ultimtpdebounce = 0;  // the last time the output pin was toggled
+unsigned long tpdebounce = 50;    // the debounce time; increase if the output flickers
+unsigned long tpcomanda = 1000;  // activate relay time in ms
 
 void setup() {
 pinMode(apel, INPUT);
@@ -23,15 +29,26 @@ void loop() {
 
 suna = digitalRead(apel);
 
-if (suna == 0)
-{
+citirestarebuton = digitalRead(apel);  // read the state of the switch into a local variable: 
+  if (citirestarebuton != ultimastarebuton) // If the switch changed, due to noise or pressing:
+  {
+    ultimtpdebounce = millis();  // reset the debouncing timer
+  }
+  if ((millis() - ultimtpdebounce) > tpdebounce) 
+  {
+    if (citirestarebuton != starebuton) // if the button state has changed
+    {
+      starebuton = citirestarebuton;         
+      if (starebuton == LOW) // only toggle the LED if the new button state is LOW
+      {
   digitalWrite(raspuns, HIGH);
-  delay(1000);
+  delay(tpcomanda);
   digitalWrite(yala, HIGH);
-  delay(1000);
-  suna = 1;
+  delay(tpcomanda);
   digitalWrite(raspuns, LOW);
   digitalWrite(yala, LOW);
-}
-
+      }
+    }
+  }
+ultimastarebuton = citirestarebuton;
 } // sfarsit program
