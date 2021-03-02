@@ -27,8 +27,6 @@ digitalWrite(yala, LOW);
 
 void loop() {
 
-suna = digitalRead(apel);
-
 citirestarebuton = digitalRead(apel);  // read the state of the switch into a local variable: 
   if (citirestarebuton != ultimastarebuton) // If the switch changed, due to noise or pressing:
   {
